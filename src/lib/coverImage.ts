@@ -20,6 +20,13 @@ export function resolveCoverImageUrl(raw: string | null | undefined): string {
     value.startsWith('data:') ||
     value.startsWith('blob:')
   ) {
+    // Automatically convert Google Drive viewer links to direct image links
+    if (value.includes('drive.google.com/')) {
+      const match = value.match(/(?:file\/d\/|id=)([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      }
+    }
     return value;
   }
 

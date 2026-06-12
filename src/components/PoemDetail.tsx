@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from './RouterContext';
 import { db } from '../lib/db';
 import { Poem, Comment } from '../types';
-import { Heart, MessageSquare, ArrowLeft, Send, Clock, Feather, Bookmark, Compass, RefreshCw } from 'lucide-react';
+import { Heart, MessageSquare, ArrowLeft, Send, Clock, Feather, Bookmark, Compass, RefreshCw, Share2, Check } from 'lucide-react';
 import { CoverImage } from './CoverImage';
 
 export const PoemDetail: React.FC = () => {
@@ -19,6 +19,20 @@ export const PoemDetail: React.FC = () => {
   // Like states
   const [hasLiked, setHasLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
+  
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    if (!poem) return;
+    try {
+      const url = `${window.location.origin}/#/poem/${poem.slug}`;
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy', err);
+    }
+  };
   
   // Comment states
   const [commentName, setCommentName] = useState('');
@@ -182,22 +196,33 @@ export const PoemDetail: React.FC = () => {
           </div>
 
           {/* Core Interactive elements */}
-          <div className="bg-white/45 dark:bg-[#2C2927]/40 backdrop-blur-md border border-white/60 dark:border-white/5 rounded-xl p-6 flex items-center justify-between shadow-sm">
+          <div className="bg-white/45 dark:bg-[#2C2927]/40 backdrop-blur-md border border-white/60 dark:border-white/5 rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm gap-4">
             <div className="space-y-1">
               <span className="text-xs text-charcoal/50 dark:text-sand/50 font-mono tracking-widest uppercase">Liked by Readers</span>
               <p className="text-base font-semibold text-ink dark:text-sand">{likesCount} appreciations</p>
             </div>
             
-            <button
-              onClick={handleLikeToggle}
-              className={`p-3.5 rounded-full shadow-sm transition-all flex items-center justify-center cursor-pointer ${
-                hasLiked
-                  ? 'bg-sage text-sand hover:bg-[#494933] scale-105'
-                  : 'bg-white/50 text-charcoal/80 hover:text-sage dark:bg-earth-card/50 dark:text-[#D9D1C5] dark:hover:text-linen border border-white/60 dark:border-white/5 hover:scale-105'
-              }`}
-            >
-              <Heart className={`w-5 h-5 ${hasLiked ? 'fill-current' : 'fill-none'}`} />
-            </button>
+            <div className="flex items-center space-x-3 w-full sm:w-auto justify-end">
+              <button
+                onClick={handleShare}
+                className="px-4 py-3 rounded-full shadow-sm transition-all flex items-center justify-center space-x-2 cursor-pointer bg-white/50 text-charcoal/80 hover:text-sage dark:bg-earth-card/50 dark:text-[#D9D1C5] dark:hover:text-linen border border-white/60 dark:border-white/5 hover:scale-105"
+                title="Copy link to poem"
+              >
+                {copied ? <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+                <span className="text-sm font-medium">{copied ? 'Copied!' : 'Share'}</span>
+              </button>
+
+              <button
+                onClick={handleLikeToggle}
+                className={`p-3.5 rounded-full shadow-sm transition-all flex items-center justify-center cursor-pointer ${
+                  hasLiked
+                    ? 'bg-sage text-sand hover:bg-[#494933] scale-105'
+                    : 'bg-white/50 text-charcoal/80 hover:text-sage dark:bg-earth-card/50 dark:text-[#D9D1C5] dark:hover:text-linen border border-white/60 dark:border-white/5 hover:scale-105'
+                }`}
+              >
+                <Heart className={`w-5 h-5 ${hasLiked ? 'fill-current' : 'fill-none'}`} />
+              </button>
+            </div>
           </div>
         </div>
 
