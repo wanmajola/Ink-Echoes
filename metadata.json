@@ -1,0 +1,6 @@
+{
+  "name": "Ink & Echoes",
+  "description": "A refined, elegant literary platform for writing, sharing, reading, and appreciating modern poetry collections and series.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
